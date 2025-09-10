@@ -9,3 +9,6 @@ server is running in port 5000
 
 # mongodb
 successfully connected to mongodb
+
+# Api set up
+API for register route

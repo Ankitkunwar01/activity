@@ -36,3 +36,10 @@ db.once('open', () => {
 app.listen(port, () => {
   console.log(` Server is running on port ${port}`);
 });
+
+
+//test API
+app.get('/',async(req,res)=>{
+    res.json({message:"api is working correctly"})
+} 
+);
