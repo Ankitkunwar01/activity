@@ -3,7 +3,8 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const User = require("./models/user"); //  Correct import
 const bcrypt = require("bcrypt");
-
+const userSchema = require("./models/user");
+const jwt = require("jsonwebtoken");
 dotenv.config();
 
 const app = express();
@@ -63,9 +64,46 @@ app.post("/register", async (req, res) => {
     // Correct bcrypt usage
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
     res.status(201).json(newUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// login api
+const secret = process.env.TOKEN_SECRET;
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const userDoc = await userSchema.findOne({ email });
+
+    if (userDoc) {
+      const passwordMatch = bcrypt.compareSync(
+        password,
+        userDoc.password
+      );
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid Credentials" });
+      }
+      const token = jwt.sign(
+        { email: userDoc.email, name: userDoc.name },
+        secret,
+        {}
+      );
+      res.cookie("token", token).json( token);
+    } else {
+      res.status(401).json({
+        error: "Invalid Credentials",
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
