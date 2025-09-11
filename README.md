@@ -12,3 +12,7 @@ successfully connected to mongodb
 
 # Api set up
 API for register route
+
+
+# Api for login route
+Successfully push data into the mongoDB database 
