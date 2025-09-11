@@ -5,6 +5,8 @@ const User = require("./models/user"); //  Correct import
 const bcrypt = require("bcrypt");
 const userSchema = require("./models/user");
 const jwt = require("jsonwebtoken");
+const productSchema = require("./models/product");
+
 dotenv.config();
 
 const app = express();
@@ -98,7 +100,7 @@ app.post("/login", async (req, res) => {
         secret,
         {}
       );
-      res.cookie("token", token).json( token);
+      res.cookie("token", token).json(userDoc, token);
     } else {
       res.status(401).json({
         error: "Invalid Credentials",
@@ -109,3 +111,28 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// Api to create product in database
+
+app.post("/product", async (req, res) => {
+  const { name, price, category, description, image, quantity } = req.body;
+  try {
+    if(!name || !price || !category || !description || !image || !quantity){
+      return res.status(401).json({ message: "Please enter all the fields" });
+    }
+    const newProduct = await productSchema.create({
+      name,
+      price,
+      category,
+      description,
+      image,
+      quantity,
+    });
+    res.status(201).json(newProduct);
+   
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+

@@ -19,3 +19,6 @@ Successfully push data into the mongoDB database
 
 # successfully login the user
 Successfully login the user
+
+# successfully add product into database 
+Successfully add product into database using api
